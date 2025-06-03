@@ -5,7 +5,7 @@ use anchor_lang::solana_program::sysvar::slot_hashes::SlotHashes;
 use sha2::{Digest, Sha256};
 use std::str::FromStr;
 
-declare_id!("8F492ppHKRqf9MbWQrrQUoT4n6fPcuGbr828eg5kYGzz");
+declare_id!("7abh1utsEzyXGPaA5ngBgnuj3PXRuzwtRM7ngEvUhrPG");
 
 const OWNER: &str = "DGErPxhvoWWVVKZ6Jh47cGtHUstQBgtCHG3WEEig7LEZ";
 
