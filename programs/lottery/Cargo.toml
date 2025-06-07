@@ -18,4 +18,4 @@ idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
 anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
-blake3 = "1.8.2"
+blake3 = { version = "1.8.2", features = ["no_avx2", "no_avx512", "no_sse2", "no_sse41"] }
