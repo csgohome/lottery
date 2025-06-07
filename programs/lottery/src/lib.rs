@@ -84,21 +84,12 @@ pub mod lottery {
                     arr.push(random_value);
                 }
                 None => {
-                    msg!("Rejection sampling failed for raw value: {}", raw);
                     break
                 }
             }
         }
 
-        msg!("ORDER ID    :{}", order_id);
-        msg!("RANDOM VALUE:{:?}", arr);
-        msg!("RANDOM TIME :{}", clock.unix_timestamp);
-
-        emit!(RandomResult {
-            order_id,
-            value: arr,
-            timestamp: clock.unix_timestamp,
-        });
+        msg!("ID:{} RANDOMS:{:?}",order_id, arr);
 
         Ok(())
     }
@@ -115,13 +106,6 @@ pub struct Random<'info> {
     pub clock: Sysvar<'info, Clock>,
     /// CHECK: readonly
     pub random_account: AccountInfo<'info>,
-}
-
-#[event]
-pub struct RandomResult {
-    pub order_id: String,
-    pub value: Vec<u32>,
-    pub timestamp: i64,
 }
 
 #[error_code]
