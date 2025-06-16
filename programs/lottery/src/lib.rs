@@ -4,7 +4,6 @@ use blake3;
 
 declare_id!("7abh1utsEzyXGPaA5ngBgnuj3PXRuzwtRM7ngEvUhrPG");
 
-// 随机数范围1-？
 const MAX_RANDOM:u64 = 100000;
 
 // 使用[拒絕抽樣法]消除取模偏誤，確保產生的隨機數在1-100000之間均勻分佈無偏誤。
@@ -28,8 +27,8 @@ pub mod lottery {
         order_id: String,
         count: u8,
     ) -> Result<()> {
-        require!(order_id.len() <= 12, Error::OrderIdTooLong);
-        require!(count <= 200,Error::InvalidCount);
+        require!(order_id.len() <= 16, Error::OrderIdTooLong);
+        require!(count <= 50,Error::InvalidCount);
 
         // 添加訂單ID作為雜湊熵源
         // Incorporate the order ID as an entropy source for hashing
@@ -46,11 +45,11 @@ pub mod lottery {
         // Add the signer as an entropy source
         // エントロピー源として署名者を追加
         let signer_bytes = ctx.accounts.signer.key().to_bytes();
-        // 隨機選取一位平台用戶作為隨機的熵源
-        // Randomly select a platform user as an entropy source for randomness
-        // プラットフォームユーザーをランダムに抽出し、ランダム性のエントロピー源とする
+        // 隨機選取一位平台用戶作為隨機的熵源，防止預測
+        // Randomly choose a platform user as an entropy source for randomness, to prevent prediction
+        // プラットフォームユーザーをランダムに抽出し、ランダム性のエントロピー源として予測を防止する
         let random_bytes = ctx.accounts.random_account.key().to_bytes();
-        
+
         let mut data = Vec::with_capacity(order_bytes.len() + count_bytes.len() + slot_bytes.len() + timestamp_bytes.len() + signer_bytes.len() + random_bytes.len());
         data.extend_from_slice(order_bytes);
         data.extend_from_slice(&count_bytes);
@@ -58,7 +57,7 @@ pub mod lottery {
         data.extend_from_slice(&timestamp_bytes);
         data.extend_from_slice(&signer_bytes);
         data.extend_from_slice(&random_bytes);
-        
+
         // 第一輪雜湊
         // First-round hashing
         // 第一段階のハッシュ化
@@ -89,7 +88,7 @@ pub mod lottery {
             }
         }
 
-        msg!("ID:{} RANDOMS:{:?}",order_id, arr);
+        msg!("ID={} RANDOMS={:?}",order_id, arr);
 
         Ok(())
     }
@@ -110,7 +109,7 @@ pub struct Random<'info> {
 
 #[error_code]
 pub enum Error {
-    #[msg("Order id length exceeds 12 bytes")]
+    #[msg("Order id length exceeds 16 bytes")]
     OrderIdTooLong,
     #[msg("Get up to 200 random numbers at one time")]
     InvalidCount,
